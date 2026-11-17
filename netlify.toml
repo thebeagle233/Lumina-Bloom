@@ -1,0 +1,9 @@
+[build]
+  command = "python3 scripts/build_demo.py"
+  publish = "demo"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumi · Lumina Bloom Demo</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body class="demo-mode">
+<div class="device">
+    <aside class="demo-banner" role="note">
+        <strong>LUMI · STATIC DEMO</strong>
+        Sample weather, places &amp; history. Scripted chat. Your logs stay in this browser.
+        <button id="btn-reset-demo" type="button">RESET DEMO</button>
+    </aside>
+    <div id="screen-log" class="screen active">
+        <h1 class="header">LOG SUNLIGHT.</h1>
+        <div class="time-entry-wrapper">
+            <div class="agent-nudge-box" id="agent-box">
+                <div class="nudge-header">
+                    <div class="agent-avatar">
+                        <svg viewBox="0 0 16 16" width="20" height="20" style="shape-rendering: crispEdges;">
+                            <rect x="4" y="4" width="8" height="8" fill="#4E9350"></rect>
+                            <rect x="6" y="6" width="1" height="1" fill="#FDF6E3"></rect>
+                            <rect x="9" y="6" width="1" height="1" fill="#FDF6E3"></rect>
+                            <rect x="5" y="9" width="6" height="1" fill="#FDF6E3"></rect>
+                            <rect x="7" y="1" width="2" height="3" fill="#A0A0A0"></rect>
+                            <rect x="7" y="0" width="2" height="1" fill="#D32F2F"></rect>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="nudge-title">LUMI AGENT</div>
+                        <div class="tiny-meta" id="agent-provider">booting local guide...</div>
+                    </div>
+                </div>
+
+                <div id="agent-view-default">
+                    <div class="nudge-text" id="agent-main-text">Checking location, weather, and your recent pattern...</div>
+                    <div class="nudge-actions">
+                        <button class="btn-agent btn-reject-nudge" id="btn-reject-init">REJECT</button>
+                        <button class="btn-agent btn-accept-nudge" id="btn-accept-nudge">ACCEPT</button>
+                    </div>
+                </div>
+
+                <div id="agent-view-reasons" style="display: none;">
+                    <div class="nudge-text">Got it. Why skip right now?</div>
+                    <div class="nudge-options">
+                        <button class="btn-agent btn-reason" data-reason="busy">BUSY</button>
+                        <button class="btn-agent btn-reason" data-reason="lazy">LAZY</button>
+                        <button class="btn-agent btn-reason" data-reason="mood">NOT IN MOOD</button>
+                    </div>
+                </div>
+
+                <div id="agent-view-response" style="display: none;">
+                    <div class="nudge-text accent-text" id="agent-response-text">...</div>
+                    <div class="nudge-actions top-gap">
+                        <button class="btn-agent btn-reject-nudge" id="btn-back-to-default">BACK</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="places-card">
+                <div class="section-mini-title">SUNNY SPOTS NEARBY</div>
+                <div id="places-status" class="subdued">Location not loaded yet.</div>
+                <div id="places-list" class="places-list"></div>
+            </div>
+
+            <div class="input-display"><span id="time-display">0</span><span class="unit">m</span></div>
+            <div class="controls">
+                <button class="btn-icon" id="btn-minus">-</button>
+                <button class="btn-icon" id="btn-plus">+</button>
+            </div>
+            <div class="input-label">Minutes Spent<br><br>Outdoors</div>
+            <button class="btn-save" id="btn-save">SAVE SESSION</button>
+        </div>
+    </div>
+
+    <div id="screen-journey" class="screen">
+        <h1 class="header">MY JOURNEY.</h1>
+        <div class="calendar-wrapper">
+            <div class="calendar-header-row">
+                <button class="cal-nav-btn" id="btn-prev-month">&lt;</button>
+                <div class="month-header" id="month-header">MONTH 202X</div>
+                <button class="cal-nav-btn" id="btn-next-month">&gt;</button>
+            </div>
+            <div class="days-of-week">
+                <div class="dow">S</div><div class="dow">M</div><div class="dow">T</div>
+                <div class="dow">W</div><div class="dow">T</div><div class="dow">F</div><div class="dow">S</div>
+            </div>
+            <div class="calendar-grid" id="calendar-grid"></div>
+            <div class="calendar-legend">
+                <div class="legend-box border-only"></div> 0m
+                <div class="legend-box heat-1"></div> 30m
+                <div class="legend-box heat-2"></div> 60m
+                <div class="legend-box heat-3"></div> 120m+
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-bloom" class="screen">
+        <div class="bloom-top-row">
+            <h1 class="header left-header">CURRENT<br>GROWTH.</h1>
+            <div class="weather-widget">
+                <svg width="20" height="20" viewBox="0 0 16 16" style="shape-rendering: crispEdges;">
+                    <rect x="2" y="1" width="6" height="6" fill="#FBC02D"></rect>
+                    <rect x="3" y="0" width="4" height="8" fill="#FBC02D"></rect>
+                    <rect x="1" y="2" width="8" height="4" fill="#FBC02D"></rect>
+                    <rect x="6" y="8" width="8" height="4" fill="#A0A0A0"></rect>
+                    <rect x="8" y="6" width="4" height="2" fill="#A0A0A0"></rect>
+                    <rect x="4" y="10" width="12" height="2" fill="#A0A0A0"></rect>
+                </svg>
+                <div class="weather-data">
+                    <span id="weather-temp">--°C</span><br>
+                    <span class="subdued" id="weather-uv">UV: --</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bloom-wrapper">
+            <div class="plant-container">
+                <div class="pixel-plant stage-1" id="pixel-plant"></div>
+            </div>
+            <div class="stats-container">
+                <div class="footer-label" id="total-sunlight-label">Total Sunlight: 0.0 Hours</div>
+                <div class="cycle-label" id="cycle-label">Cycle Progress: 0 / 30h</div>
+                <div class="footer-label muted-label">HARVESTED</div>
+                <div class="harvest-box" id="harvest-container"></div>
+            </div>
+        </div>
+
+        <div class="bloom-chat-card">
+            <div class="section-title">BLOOM CHAT <span id="bloom-chat-status">Scripted demo companion.</span></div>
+            <div class="body-state-row">
+                <input id="body-state-input" type="text" placeholder="How does your body feel right now? e.g. tired, heavy eyes, anxious" maxlength="160">
+            </div>
+            <div id="bloom-chat-history" class="bloom-chat-history"></div>
+            <div class="bloom-chat-input-row">
+                <input id="bloom-chat-input" type="text" placeholder="Tell Bloom how you feel..." maxlength="300">
+                <button id="bloom-chat-send" class="btn-agent btn-accept-nudge">SEND</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-ai" class="screen">
+        <h1 class="header">LUMI LAB.</h1>
+        <p class="prototype-note">Illustrative habit patterns. No body sensors or measured stress data.</p>
+        <div class="section-title">BIOMETRIC SYNC <span>[ESTIMATED]</span></div>
+        <div class="terminal-box terminal-space">
+            <div class="sync-row">
+                <span class="meta-row">RECOVERY LOAD</span>
+                <span class="good-text">PATTERN MODEL</span>
+            </div>
+            <div class="terminal-value">
+                DETECTED STRESS: <span id="stress-text" class="warn-text">MODERATE</span>
+            </div>
+            <div class="stress-bar-container">
+                <div class="stress-bar-fill" id="stress-bar"></div>
+            </div>
+        </div>
+
+        <div class="section-title">PROBABILITY OF SLACKING</div>
+        <div class="graph-box">
+            <div class="graph-subtext" id="slack-subtext">Loading behavioral estimate...</div>
+            <svg class="graph-svg" viewBox="0 0 100 60" preserveAspectRatio="none" style="shape-rendering: crispEdges;">
+                <line x1="0" y1="15" x2="100" y2="15" stroke="rgba(160,160,160,0.3)" stroke-width="1" stroke-dasharray="2,2"></line>
+                <line x1="0" y1="30" x2="100" y2="30" stroke="rgba(160,160,160,0.3)" stroke-width="1" stroke-dasharray="2,2"></line>
+                <line x1="0" y1="45" x2="100" y2="45" stroke="rgba(160,160,160,0.3)" stroke-width="1" stroke-dasharray="2,2"></line>
+                <path d="M 0 50 L 20 46 L 40 36 L 60 18 L 80 10 L 100 16" fill="none" stroke="var(--pixel-green)" stroke-width="2"></path>
+                <rect x="78" y="8" width="4" height="4" fill="var(--tomato-red)"></rect>
+            </svg>
+            <div class="graph-labels">
+                <span>8A</span><span>12P</span><span>4P</span><span>8P</span>
+            </div>
+        </div>
+
+        <div class="section-title">LATEST REASONS</div>
+        <div class="terminal-box">
+            <div class="terminal-text" id="feedback-log">No feedback yet. Reject a nudge to teach Lumi your routine.</div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <button class="nav-btn active" data-target="screen-log">LOG</button>
+        <button class="nav-btn" data-target="screen-journey">JOURNEY</button>
+        <button class="nav-btn" data-target="screen-bloom">BLOOM</button>
+        <button class="nav-btn" data-target="screen-ai">LUMI<br>LAB</button>
+    </div>
+
+    <div class="modal-overlay" id="day-modal">
+        <div class="modal-card">
+            <button class="btn-close" id="close-day-btn">X</button>
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <svg viewBox="0 0 16 16" width="100%" height="100%" style="shape-rendering: crispEdges;">
+                        <rect x="2" y="4" width="12" height="10" fill="#FDF6E3" stroke="#322F3D" stroke-width="2"></rect>
+                        <rect x="2" y="4" width="12" height="3" fill="#D32F2F"></rect>
+                        <rect x="4" y="2" width="2" height="3" fill="#322F3D"></rect>
+                        <rect x="10" y="2" width="2" height="3" fill="#322F3D"></rect>
+                    </svg>
+                </div>
+                <div class="modal-title">
+                    DAILY RECORD<br>
+                    <span id="day-modal-date" class="modal-date">APR 01, 2026</span>
+                </div>
+            </div>
+            <div class="modal-body">
+                <span class="highlight">Sunlight logged</span>
+                <div class="day-record-value" id="day-modal-mins">0 MINS</div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="static/demo-api.js"></script>
+<script src="static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: lumi-bloom
+    runtime: python
+    rootDir: lumi-web-app
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --timeout 90 app:app
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.12
+      - key: FLASK_DEBUG
+        value: "0"
+      - key: LLM_PROVIDER
+        value: heuristic
