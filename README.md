@@ -1,3 +1,5 @@
+**[点击体验 Lumina Bloom 静态 Demo](https://dashing-entremet-662c57.netlify.app/)**
+
 # Lumina Bloom
 
 **从城市微气候研究到个性化户外 AI Agent**  
@@ -135,4 +137,4 @@ python app.py
 
 部署与模型配置见 [部署说明](docs/DEPLOYMENT.md)，检查范围见 [验证记录](docs/VALIDATION.md)，字体来源与许可证见 [第三方说明](THIRD_PARTY_NOTICES.md)。
 
-仓库已包含 Netlify 静态部署配置，发布目录为 `demo/`；当前 README 尚未收录经核实的公网体验网址。
+仓库已包含 Netlify 静态部署配置，发布目录为 `demo/`。
